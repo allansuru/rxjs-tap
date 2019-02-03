@@ -1,6 +1,7 @@
+import { MyCountry } from './my-country';
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { tap, map, filter, retry, catchError } from 'rxjs/operators';
+import { tap, map, filter, retry, catchError, concat } from 'rxjs/operators';
 import { TapDemoService } from '../tap/tap.service';
 
 @Component({
@@ -14,12 +15,15 @@ export class TapComponent implements OnInit {
   countryName$: Observable<string>;
   countryStates: string[];
 
+  concatCountryNameAndState$: Observable<any> = new Observable();
+
   constructor(private tapService: TapDemoService) { }
 
   ngOnInit() {
     this.getStdNames();
     this.getCountryName();
     this.getCountryStates();
+    this.getCountryAndStates();
   }
 
   getStdNames() {
@@ -53,6 +57,13 @@ export class TapComponent implements OnInit {
       })
     )
     .subscribe(res => this.countryStates = res);
+   }
+
+   getCountryAndStates() {
+   const junta =  this.stdNames$.pipe(concat(this.countryName$));
+    junta.subscribe(res => console.log(res));
+
+
    }
 
 
